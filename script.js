@@ -72,24 +72,56 @@ document.querySelectorAll('.tab-button').forEach(button => {
 // Form submission
 document.getElementById('studentForm').addEventListener('submit', (e) => {
     e.preventDefault();
-    const student = new Student(
-        null,
-        document.getElementById('fullname').value,
-        document.getElementById('dob').value,
-        document.getElementById('gender').value,
-        document.getElementById('department').value,
-        document.getElementById('course').value,
-        document.getElementById('program').value,
-        document.getElementById('address').value,
-        document.getElementById('email').value,
-        document.getElementById('phone').value,
-        document.getElementById('status').value
-    );
     
-    studentManager.addStudent(student);
-    e.target.reset();
-    alert('Thêm sinh viên thành công!');
+    const form = e.target;
+    const isEditMode = form.dataset.editMode === "true";
+    
+    const studentData = {
+        fullname: document.getElementById('fullname').value,
+        dob: document.getElementById('dob').value,
+        gender: document.getElementById('gender').value,
+        department: document.getElementById('department').value,
+        course: document.getElementById('course').value,
+        program: document.getElementById('program').value,
+        address: document.getElementById('address').value,
+        email: document.getElementById('email').value,
+        phone: document.getElementById('phone').value,
+        status: document.getElementById('status').value
+    };
+    
+    if (isEditMode) {
+        const mssv = parseInt(form.dataset.studentId);
+        if (studentManager.updateStudent(mssv, studentData)) {
+            alert('Cập nhật thành công!');
+            form.reset();
+            form.dataset.editMode = "false";
+            form.dataset.studentId = "";
+            const submitButton = document.querySelector('#studentForm button[type="submit"]');
+            submitButton.textContent = "Thêm Sinh Viên";
+            displayStudents();
+            document.querySelector('[data-tab="list"]').click();
+        }
+    } else {
+        console.log(studentData);
+        const student = new Student(
+            null,
+            studentData.fullname,
+            studentData.dob,
+            studentData.gender,
+            studentData.department,
+            studentData.course,
+            studentData.program,
+            studentData.address,
+            studentData.email,
+            studentData.phone,
+            studentData.status
+        );
+        studentManager.addStudent(student);
+        form.reset();
+        alert('Thêm sinh viên thành công!');
+    }
 });
+
 
 function displayStudents() {
     const tbody = document.querySelector('#studentTable tbody');
@@ -102,9 +134,15 @@ function displayStudents() {
             <td>${student.dob}</td>
             <td>${student.gender}</td>
             <td>${student.department}</td>
-            <td>
-                <button onclick="editStudent(${student.mssv})">Sửa</button>
-                <button onclick="deleteStudent(${student.mssv})">Xóa</button>
+            <td>${student.course}</td>
+            <td>${student.program}</td>
+            <td>${student.address}</td>
+            <td>${student.email}</td>
+            <td>${student.phone}</td>
+            <td>${student.status}</td>
+            <td style="display: flex; gap: 5px;">
+                <button onclick="editStudent(${student.mssv})" >Sửa</button>
+                <button onclick="deleteStudent(${student.mssv})" style="background-color: red;">Xóa</button>
             </td>
         `;
         tbody.appendChild(row);
@@ -127,9 +165,15 @@ function searchStudents() {
         <thead>
             <tr>
                 <th>MSSV</th>
-                <th>Họ tên</th>
+                <th>Họ và tên</th>
                 <th>Ngày sinh</th>
+                <th>Giới tính</th>
                 <th>Khoa</th>
+                <th>Khóa</th>
+                <th>Chương trình</th>
+                <th>Địa chỉ</th>
+                <th>Email</th>
+                <th>Số điện thoại</th>
                 <th>Tình trạng</th>
             </tr>
         </thead>
@@ -139,7 +183,13 @@ function searchStudents() {
                     <td>${student.mssv}</td>
                     <td>${student.fullname}</td>
                     <td>${student.dob}</td>
+                    <td>${student.gender}</td>
                     <td>${student.department}</td>
+                    <td>${student.course}</td>
+                    <td>${student.program}</td>
+                    <td>${student.address}</td>
+                    <td>${student.email}</td>
+                    <td>${student.phone}</td>
                     <td>${student.status}</td>
                 </tr>
             `).join('')}
@@ -158,41 +208,16 @@ function deleteStudent(mssv) {
 function editStudent(mssv) {
     const student = studentManager.students.find(s => s.mssv === mssv);
     if (!student) return;
-
-    // Fill the form with student data
     Object.keys(student).forEach(key => {
         const input = document.getElementById(key);
         if (input) input.value = student[key];
     });
-
-    // Switch to add tab (which contains the form)
     document.querySelector('[data-tab="add"]').click();
-
-    // Modify form submission to update instead of add
+    const submitButton = document.querySelector('#studentForm button[type="submit"]');
+    submitButton.textContent = "Cập nhật Sinh Viên";
     const form = document.getElementById('studentForm');
-    const originalSubmitHandler = form.onsubmit;
-    form.onsubmit = (e) => {
-        e.preventDefault();
-        const updatedData = {
-            fullname: document.getElementById('fullname').value,
-            dob: document.getElementById('dob').value,
-            gender: document.getElementById('gender').value,
-            department: document.getElementById('department').value,
-            course: document.getElementById('course').value,
-            program: document.getElementById('program').value,
-            address: document.getElementById('address').value,
-            email: document.getElementById('email').value,
-            phone: document.getElementById('phone').value,
-            status: document.getElementById('status').value
-        };
-        
-        if (studentManager.updateStudent(mssv, updatedData)) {
-            alert('Cập nhật thành công!');
-            form.reset();
-            form.onsubmit = originalSubmitHandler;
-            displayStudents();
-        }
-    };
+    form.dataset.editMode = "true";
+    form.dataset.studentId = mssv;
 }
 
 // Initial display
