@@ -18,26 +18,20 @@ A command-line Student Management System built with Node.js that provides compre
 
 - **Remove Student**: Delete student records
   - Remove by Student ID
-  - Safeguards against accidental deletion
   
 - **Search Functionality**:
   - Search by Student ID
   - Search by Student Name
-  - Filter by Department
 
 - **Display Options**:
   - View all students
-  - Sort by various fields
-  - Formatted output for better readability
 
 ## Project Structure
 ```
 Student_ID/
 │
-├── src/
-│   └── studentManager.js   # Main application logic
+├── studentManager.js   # Main application logic
 │
-├── package.json           # Project dependencies and scripts
 └── README.md             # Project documentation
 ```
 
