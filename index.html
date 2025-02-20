@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Quản Lý Sinh Viên</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Quản Lý Sinh Viên</h1>
+        
+        <div class="tabs">
+            <button class="tab-button active" data-tab="add">Thêm Sinh Viên</button>
+            <button class="tab-button" data-tab="list">Danh Sách Sinh Viên</button>
+            <button class="tab-button" data-tab="search">Tìm Kiếm</button>
+        </div>
+
+        <div id="add" class="tab-content active">
+            <form id="studentForm">
+                <div class="form-group">
+                    <label>Họ tên:</label>
+                    <input type="text" id="fullname" required>
+                </div>
+                <div class="form-group">
+                    <label>Ngày sinh:</label>
+                    <input type="date" id="dob" required>
+                </div>
+                <div class="form-group">
+                    <label>Giới tính:</label>
+                    <select id="gender" required>
+                        <option value="Nam">Nam</option>
+                        <option value="Nữ">Nữ</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Khoa:</label>
+                    <select id="department" required>
+                        <option value="Khoa Luật">Khoa Luật</option>
+                        <option value="Khoa Tiếng Anh thương mại">Khoa Tiếng Anh thương mại</option>
+                        <option value="Khoa Tiếng Nhật">Khoa Tiếng Nhật</option>
+                        <option value="Khoa Tiếng Pháp">Khoa Tiếng Pháp</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Khóa:</label>
+                    <input type="number" id="course" min="2000" max="2099" required>
+                </div>
+                <div class="form-group">
+                    <label>Chương trình:</label>
+                    <input type="text" id="program" required>
+                </div>
+                <div class="form-group">
+                    <label>Địa chỉ:</label>
+                    <input type="text" id="address" required>
+                </div>
+                <div class="form-group">
+                    <label>Email:</label>
+                    <input type="email" id="email" required>
+                </div>
+                <div class="form-group">
+                    <label>Số điện thoại:</label>
+                    <input type="tel" id="phone" pattern="[0-9]{10,11}" required title="The phone number must have 10 or 11 digits">
+                </div>
+                <div class="form-group">
+                    <label>Tình trạng:</label>
+                    <select id="status" required>
+                        <option value="Đang học">Đang học</option>
+                        <option value="Đã tốt nghiệp">Đã tốt nghiệp</option>
+                        <option value="Đã thôi học">Đã thôi học</option>
+                        <option value="Tạm dừng học">Tạm dừng học</option>
+                    </select>
+                </div>
+                <button type="submit">Thêm Sinh Viên</button>
+            </form>
+        </div>
+
+        <div id="list" class="tab-content">
+            <table id="studentTable">
+                <thead>
+                    <tr>
+                        <th>MSSV</th>
+                        <th>Họ tên</th>
+                        <th>Ngày sinh</th>
+                        <th>Giới tính</th>
+                        <th>Khoa</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <div id="search" class="tab-content">
+            <div class="search-container">
+                <div class="form-group">
+                    <label>Tìm kiếm theo MSSV hoặc họ tên:</label>
+                    <input type="text" id="searchInput">
+                </div>
+                <button onclick="searchStudents()">Tìm kiếm</button>
+            </div>
+            <div id="searchResults"></div>
+        </div>
+    </div>
+</body>
+</html>
