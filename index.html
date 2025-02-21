@@ -79,10 +79,16 @@
                     </select>
                 </div>
                 <button type="submit">Thêm Sinh Viên</button>
+                <button type="button" id="cancelEdit" style="display: none; background-color: red;">Hủy Cập Nhật</button>
             </form>
         </div>
 
         <div id="list" class="tab-content">
+            <div style="display: flex; justify-content: flex-end; gap: 10px; margin-bottom: 10px;">
+                <input type="file" id="importCSVInput" accept=".csv" style="display: none;">
+                <button id="importCSVButton" style="background-color: rgb(19, 19, 212);" onclick="document.getElementById('importCSVInput').click();">Nhập CSV</button>
+                <button id="exportCSVButton" style="background-color: rgb(19, 19, 212);">Xuất CSV</button>
+            </div>
             <table id="studentTable">
                 <thead>
                     <tr>
@@ -144,5 +150,9 @@
             </div>
         </div>
     </div>
+
+    <footer style="text-align: center; padding: 10px; background-color: #f1f1f1; margin-top: 20px; font-weight: bold;">
+        <p>Version 2.0 | Build Date: 21/02/2025</p>
+    </footer>
 </body>
 </html>

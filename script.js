@@ -109,6 +109,7 @@ document.getElementById('studentForm').addEventListener('submit', (e) => {
             form.dataset.editMode = "false";
             form.dataset.studentId = "";
             const submitButton = document.querySelector('#studentForm button[type="submit"]');
+            document.getElementById('cancelEdit').style.display = "none";
             submitButton.textContent = "Thêm Sinh Viên";
             displayStudents();
             document.querySelector('[data-tab="list"]').click();
@@ -130,6 +131,7 @@ document.getElementById('studentForm').addEventListener('submit', (e) => {
         studentManager.addStudent(student);
         form.reset();
         alert('Thêm sinh viên thành công!');
+        document.getElementById('cancelEdit').style.display = "none";
         displayStudents();
     }
 });
@@ -151,9 +153,11 @@ function displayStudents() {
             <td>${student.email}</td>
             <td>${student.phone}</td>
             <td>${student.status}</td>
-            <td style="display: flex; gap: 5px;">
-                <button onclick="editStudent(${student.mssv})" >Sửa</button>
-                <button onclick="deleteStudent(${student.mssv})" style="background-color: red;">Xóa</button>
+            <td >
+                <div class="btn-group">
+                    <button onclick="editStudent(${student.mssv})" >Sửa</button>
+                    <button onclick="deleteStudent(${student.mssv})" style="background-color: red;">Xóa</button>
+                </div>
             </td>
         `;
         tbody.appendChild(row);
@@ -172,18 +176,21 @@ function deleteStudent(mssv) {
 function editStudent(mssv) {
     const student = studentManager.students.find(s => s.mssv === mssv);
     if (!student) return;
-    
+
     Object.keys(student).forEach(key => {
         const input = document.getElementById(key);
         if (input) input.value = student[key];
     });
-    
+
     document.querySelector('[data-tab="add"]').click();
     const submitButton = document.querySelector('#studentForm button[type="submit"]');
     submitButton.textContent = "Cập nhật Sinh Viên";
+
     const form = document.getElementById('studentForm');
     form.dataset.editMode = "true";
     form.dataset.studentId = mssv;
+
+    document.getElementById('cancelEdit').style.display = "inline-block";
 }
 
 // Add filter HTML to the search tab
@@ -305,12 +312,102 @@ function displayFilteredStudents(students) {
 }
 
 // Add event listeners for search and filters
-document.getElementById('searchButton').addEventListener('click', searchStudents);
-document.getElementById('filterGender').addEventListener('change', searchStudents);
-document.getElementById('filterDepartment').addEventListener('change', searchStudents);
-document.getElementById('filterCourse').addEventListener('input', searchStudents);
-document.getElementById('filterProgram').addEventListener('change', searchStudents);
-document.getElementById('filterStatus').addEventListener('change', searchStudents);
+if (document.getElementById('searchButton')) {
+    document.getElementById('searchButton').addEventListener('click', searchStudents);
+}
+if (document.getElementById('filterGender')) {
+    document.getElementById('filterGender').addEventListener('change', searchStudents);
+}
+if (document.getElementById('filterDepartment')) {
+    document.getElementById('filterDepartment').addEventListener('change', searchStudents);
+}
+if (document.getElementById('filterCourse')) {
+    document.getElementById('filterCourse').addEventListener('input', searchStudents);
+}
+if (document.getElementById('filterProgram')) {
+    document.getElementById('filterProgram').addEventListener('change', searchStudents);
+}
+if (document.getElementById('filterStatus')) {
+    document.getElementById('filterStatus').addEventListener('change', searchStudents);
+}
+
+function exportToCSV() {
+    if (studentManager.students.length === 0) {
+        alert("Không có dữ liệu để xuất!");
+        return;
+    }
+
+    const headers = "MSSV,Họ và tên,Ngày sinh,Giới tính,Khoa,Khóa,Chương trình,Địa chỉ,Email,Điện thoại,Trạng thái\n";
+    const rows = studentManager.students.map(student =>
+        `${student.mssv},"${student.fullname}",${student.dob},${student.gender},${student.department},${student.course},${student.program},"${student.address}",${student.email},${student.phone},${student.status}`
+    ).join("\n");
+
+    const csvContent = headers + rows;
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "students.csv";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+// Function to import students from CSV
+function importFromCSV(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const csvData = e.target.result;
+        const lines = csvData.split("\n").slice(1); // Skip header
+        const newStudents = [];
+
+        lines.forEach(line => {
+            if (!line.trim()) return; // Skip empty lines
+            const [mssv, fullname, dob, gender, department, course, program, address, email, phone, status] = line.split(",");
+            const student = new Student(
+                parseInt(mssv),
+                fullname.replace(/"/g, ''), // Remove quotes if present
+                dob,
+                gender,
+                department,
+                parseInt(course),
+                program,
+                address.replace(/"/g, ''),
+                email,
+                phone,
+                status
+            );
+            newStudents.push(student);
+        });
+
+        newStudents.forEach(student => studentManager.addStudent(student));
+        displayStudents();
+        alert("Nhập sinh viên từ CSV thành công!");
+    };
+
+    reader.readAsText(file);
+}
+
+// Add buttons for export & import in the UI
+if (document.getElementById('exportCSVButton')) {
+    document.getElementById("exportCSVButton").addEventListener("click", exportToCSV);
+}
+if (document.getElementById('importCSVInput')) {
+    document.getElementById("importCSVInput").addEventListener("change", importFromCSV);
+}
+
+if (document.getElementById('cancelEdit')) {
+    document.getElementById('cancelEdit').addEventListener('click', () => {
+        const form = document.getElementById('studentForm');
+        form.reset();
+        form.dataset.editMode = "false";
+        form.dataset.studentId = "";
+        document.querySelector('#studentForm button[type="submit"]').textContent = "Thêm Sinh Viên";
+        document.getElementById('cancelEdit').style.display = "none"; // Ẩn nút hủy
+    });
+}
 
 // Initial display
 displayStudents();
