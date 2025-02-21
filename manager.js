@@ -440,6 +440,57 @@ if (document.getElementById('cancelEdit')) {
     });
 }
 
+// Xuất JSON
+if (document.getElementById('exportJSONButton')) {
+    document.getElementById('exportJSONButton').addEventListener('click', () => {
+        console.log(studentManager.students);
+        const dataStr = JSON.stringify(studentManager.students, null, 4);
+        const blob = new Blob([dataStr], { type: 'application/json' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'students.json';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    });
+}
+
+// Nhập JSON
+if (document.getElementById('importJSONInput')) {
+    document.getElementById('importJSONInput').addEventListener('change', (event) => {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const data = JSON.parse(e.target.result);
+                if (Array.isArray(data)) {
+                    data.forEach(student => studentManager.addStudent(new Student(
+                        student.mssv, student.fullname, student.dob, student.gender,
+                        student.department, student.course, student.program, student.address,
+                        student.email, student.phone, student.status
+                    )));
+                    displayStudents();
+                    alert('Nhập JSON thành công!');
+                } else {
+                    alert('File không hợp lệ!');
+                }
+            } catch (error) {
+                alert('Lỗi khi đọc file JSON!');
+            }
+        };
+        reader.readAsText(file);
+    });
+}
+
+// Bấm nút để mở file JSON
+if (document.getElementById('importJSONButton')) {
+    document.getElementById('importJSONButton').addEventListener('click', () => {
+        document.getElementById('importJSONInput').click();
+    });
+}
+
 document.querySelectorAll('.tab-button').forEach(button => {
     button.addEventListener('click', () => {
         document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));

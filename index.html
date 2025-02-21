@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Quản Lý Sinh Viên</title>
     <link rel="stylesheet" href="style.css">
-    <script src="script.js" defer></script>
+    <script src="manager.js" defer></script>
     <script src="category.js" defer></script>
     <script src="logging.js" defer></script>
 </head>
@@ -90,6 +90,10 @@
                 <input type="file" id="importCSVInput" accept=".csv" style="display: none;">
                 <button id="importCSVButton" style="background-color: rgb(19, 19, 212);" onclick="document.getElementById('importCSVInput').click();">Nhập CSV</button>
                 <button id="exportCSVButton" style="background-color: rgb(19, 19, 212);">Xuất CSV</button>
+
+                <input type="file" id="importJSONInput" accept=".json" style="display: none;">
+                <button id="importJSONButton" style="background-color: rgb(19, 19, 212);" onclick="document.getElementById('importJSONInput').click();">Nhập JSON</button>
+                <button id="exportJSONButton" style="background-color: rgb(19, 19, 212);">Xuất JSON</button>
             </div>
             <table id="studentTable">
                 <thead>
