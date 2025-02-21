@@ -4,28 +4,29 @@
 A command-line Student Management System built with Node.js that provides comprehensive functionality for managing student records. The system enables administrators to perform CRUD operations (Create, Read, Update, Delete) on student data through console interface.
 
 ## Features
+![Menu Interface](./screenshots/menu.jpg)
 - **Add Student**: Create new student records with detailed information
   - Name, Student ID
   - Date of Birth
   - Gender
   - Department/Major
   - Contact Information
-  
+![Add Student Interface](./screenshots/add-student.jpg)
 - **Update Student**: Modify existing student information
   - Update any field
   - Validation of input data
   - Confirmation before changes
-
+![Update Student Interface](./screenshots/update-student.jpg)
 - **Remove Student**: Delete student records
   - Remove by Student ID
-  
+![Remove Student Interface](./screenshots/remove-student.jpg)
 - **Search Functionality**:
   - Search by Student ID
   - Search by Student Name
-
+![Search Student Interface](./screenshots/search-student.jpg)
 - **Display Options**:
   - View all students
-
+![Display List Student Interface](./screenshots/display-list.jpg)
 ## Project Structure
 ```
 Student_ID/
