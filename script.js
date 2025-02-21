@@ -66,7 +66,38 @@ class StudentManager {
     }
 }
 
-const studentManager = new StudentManager();
+class StudentManagerWithLogging extends StudentManager {
+    addStudent(student) {
+        const newStudent = super.addStudent(student);
+        logManager.addLog('Thêm sinh viên', {
+            mssv: newStudent.mssv
+        });
+        return newStudent;
+    }
+
+    removeStudent(mssv) {
+        const student = this.students.find(s => s.mssv === parseInt(mssv));
+        if (student) {
+            logManager.addLog('Xóa sinh viên', {
+                mssv: student.mssv
+            });
+        }
+        super.removeStudent(mssv);
+    }
+
+    updateStudent(mssv, updatedData) {
+        const oldData = this.students.find(s => s.mssv === parseInt(mssv));
+        const success = super.updateStudent(mssv, updatedData);
+        if (success) {
+            logManager.addLog('Cập nhật sinh viên', {
+                mssv: mssv
+            });
+        }
+        return success;
+    }
+}
+
+const studentManager = new StudentManagerWithLogging();
 
 // Tab switching
 document.querySelectorAll('.tab-button').forEach(button => {
@@ -408,6 +439,23 @@ if (document.getElementById('cancelEdit')) {
         document.getElementById('cancelEdit').style.display = "none"; // Ẩn nút hủy
     });
 }
+
+document.querySelectorAll('.tab-button').forEach(button => {
+    button.addEventListener('click', () => {
+        document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        button.classList.add('active');
+        document.getElementById(button.dataset.tab).classList.add('active');
+
+        if (button.dataset.tab === 'list') {
+            displayStudents();
+        } else if (button.dataset.tab === 'categories') {
+            categoryManager.displayCategories();
+        } else if (button.dataset.tab === 'logs') {
+            displayLogs(); // Hiển thị log khi mở tab
+        }
+    });
+});
 
 // Initial display
 displayStudents();

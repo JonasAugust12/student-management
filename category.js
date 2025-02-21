@@ -82,7 +82,31 @@ class CategoryManager {
     }
 }
 
-const categoryManager = new CategoryManager();
+class CategoryManagerWithLogging extends CategoryManager {
+    addCategory(type, value) {
+        const success = super.addCategory(type, value);
+        if (success) {
+            logManager.addLog('Thêm danh mục', {
+                type: type,
+                value: value
+            });
+        }
+        return success;
+    }
+
+    removeCategory(type, value) {
+        const success = super.removeCategory(type, value);
+        if (success) {
+            logManager.addLog('Xóa danh mục', {
+                type: type,
+                value: value
+            });
+        }
+        return success;
+    }
+}
+
+const categoryManager = new CategoryManagerWithLogging();
 
 function addCategory(type) {
     const input = document.getElementById(`new-${type}`);

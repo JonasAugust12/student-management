@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="style.css">
     <script src="script.js" defer></script>
     <script src="category.js" defer></script>
+    <script src="logging.js" defer></script>
 </head>
 <body>
     <div class="container">
@@ -16,6 +17,7 @@
             <button class="tab-button" data-tab="list">Danh Sách Sinh Viên</button>
             <button class="tab-button" data-tab="search">Tìm Kiếm</button>
             <button class="tab-button" data-tab="categories">Quản Lý Danh Mục</button>
+            <button class="tab-button" data-tab="logs">Nhật Ký Hệ Thống</button>
         </div>
 
         <div id="add" class="tab-content active">
@@ -148,6 +150,18 @@
                     <button onclick="addCategory('statuse')">Thêm Tình trạng</button>
                 </div>
             </div>
+        </div>
+
+        <div id="logs" class="tab-content">
+            <table id="logTable">
+                <thead>
+                    <tr>
+                        <th>Thời gian</th>
+                        <th>Hoạt động</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
         </div>
     </div>
 
