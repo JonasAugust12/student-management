@@ -1,5 +1,8 @@
 # Student Management System
 
+## Live Demo
+Try the application here: [Student Management System](https://student-management-5q1qwrfju-minh-toans-projects.vercel.app/)
+
 ## Introduction
 A command-line Student Management System built with Node.js that provides comprehensive functionality for managing student records. The system enables administrators to perform CRUD operations (Create, Read, Update, Delete) on student data through console interface.
 
