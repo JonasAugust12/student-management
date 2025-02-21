@@ -5,6 +5,7 @@
     <title>Quản Lý Sinh Viên</title>
     <link rel="stylesheet" href="style.css">
     <script src="script.js" defer></script>
+    <script src="category.js" defer></script>
 </head>
 <body>
     <div class="container">
@@ -14,6 +15,7 @@
             <button class="tab-button active" data-tab="add">Thêm Sinh Viên</button>
             <button class="tab-button" data-tab="list">Danh Sách Sinh Viên</button>
             <button class="tab-button" data-tab="search">Tìm Kiếm</button>
+            <button class="tab-button" data-tab="categories">Quản Lý Danh Mục</button>
         </div>
 
         <div id="add" class="tab-content active">
@@ -48,7 +50,12 @@
                 </div>
                 <div class="form-group">
                     <label>Chương trình:</label>
-                    <input type="text" id="program" required>
+                    <select id="program" required>
+                        <option value="Chất lượng cao">Chất lượng cao</option>
+                        <option value="Đại trà">Đại trà</option>
+                        <option value="Cử nhân tài năng">Cử nhân tài năng</option>
+                        <option value="Chương trình tiên tiến">Chương trình tiên tiến</option>
+                    </select>
                 </div>
                 <div class="form-group">
                     <label>Địa chỉ:</label>
@@ -106,6 +113,35 @@
                 <button onclick="searchStudents()">Tìm kiếm</button>
             </div>
             <div id="searchResults"></div>
+        </div>
+
+        <div id="categories" class="tab-content">
+            <div class="category-container">
+                <h3>Khoa</h3>
+                <div class="category-list" id="departments-list"></div>
+                <div class="add-category">
+                    <input type="text" id="new-department" placeholder="Tên khoa mới">
+                    <button onclick="addCategory('department')">Thêm Khoa</button>
+                </div>
+            </div>
+    
+            <div class="category-container">
+                <h3>Chương trình</h3>
+                <div class="category-list" id="programs-list"></div>
+                <div class="add-category">
+                    <input type="text" id="new-program" placeholder="Tên chương trình mới">
+                    <button onclick="addCategory('program')">Thêm Chương trình</button>
+                </div>
+            </div>
+    
+            <div class="category-container">
+                <h3>Tình trạng</h3>
+                <div class="category-list" id="statuses-list"></div>
+                <div class="add-category">
+                    <input type="text" id="new-statuse" placeholder="Tên tình trạng mới">
+                    <button onclick="addCategory('statuse')">Thêm Tình trạng</button>
+                </div>
+            </div>
         </div>
     </div>
 </body>
