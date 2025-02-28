@@ -1,6 +1,6 @@
 {
     "emailValidation": {
-      "enabled": false,
+      "enabled": true,
       "pattern": "@student.[domain].edu.vn",
       "domains": ["hcmus", "ussh", "hcmut", "hcmue", "hcmup", "hcmuef", "hcmulaw", "hcmiu"]
     },

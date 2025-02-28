@@ -46,3 +46,6 @@ class LogManager {
 }
 
 const logManager = new LogManager();
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = LogManager;
+}

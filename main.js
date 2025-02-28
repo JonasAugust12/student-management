@@ -143,7 +143,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Form submission
     document.getElementById('studentForm').addEventListener('submit', (e) => {
         e.preventDefault();
-        
+        console.log('Form submitted');
         // Kiểm tra hợp lệ trước khi submit
         const isEmailValid = emailInput.value.trim() === '' || validateEmail(emailInput.value.trim()).valid;
         const isPhoneValid = phoneInput.value.trim() === '' || validatePhone(phoneInput.value.trim()).valid;
@@ -153,8 +153,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (e.target.dataset.editMode === "true") {
             isStatusValid = validateStatusChange();
         }
-        
-        if (!isEmailValid || !isPhoneValid || !isMssvValid || !isStatusValid) {
+        console.log(isEmailValid, isPhoneValid, isMssvValid, isStatusValid);
+        if (!isEmailValid || !isPhoneValid || !isMssvValid || !isStatusValid && !isEditMode) {
             return;
         }
         
