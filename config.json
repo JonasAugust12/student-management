@@ -1,9 +1,11 @@
 {
     "emailValidation": {
+      "enabled": false,
       "pattern": "@student.[domain].edu.vn",
       "domains": ["hcmus", "ussh", "hcmut", "hcmue", "hcmup", "hcmuef", "hcmulaw", "hcmiu"]
     },
     "phoneValidation": {
+      "enabled": false,
       "patterns": {
         "VN": {
           "regex": "^(\\+84|0[3|5|7|8|9])\\d{8}$",
@@ -28,6 +30,7 @@
       }
     },
     "statusValidation": {
+      "enabled": true,
       "defaultStatuses": ["Đang học", "Bảo lưu", "Tốt nghiệp", "Đình chỉ"],
       "transitions": {
         "Đang học": ["Bảo lưu", "Tốt nghiệp", "Đình chỉ"],
@@ -35,5 +38,9 @@
         "Tốt nghiệp": [],
         "Đình chỉ": ["Bảo lưu, Đang học"]
       }
+    },
+    "deletionRestriction": {
+        "enabled": true,
+        "timeWindowMinutes": 30
     }
   }

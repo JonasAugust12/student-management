@@ -152,8 +152,9 @@ th {
 }
 
 .btn-group {
-    display: flex;
-    gap: 8px;
+    display: grid;
+    grid-template-columns: 1fr 1fr; 
+    gap: 3px;
 }
 
 .update-btn {

@@ -31,70 +31,74 @@ function initializeFormWithConfig() {
 
 function validateEmail(email) {
     if (!email || email.trim() === '') return { valid: false, message: 'Email không được để trống' };
-    
-    if (appConfig.emailValidation) {
+
+    if (appConfig.emailValidation?.enabled) {
         const domains = appConfig.emailValidation.domains;
         const match = email.match(/@student\.(.+)\.edu\.vn$/i);
         if (!match || !domains.includes(match[1].toLowerCase())) {
             return {
-                valid: false, 
+                valid: false,
                 message: 'Email phải có dạng @student.university.edu.vn với university là: ' + domains.join(', ')
             };
-        } else {
-            return { valid: true };
         }
+        return { valid: true };
     } else {
-        return { valid: false, message: 'Không thể xác thực email do thiếu cấu hình' };
+        if (/^[a-zA-Z0-9._%+-]+@gmail\.com$/i.test(email)) {
+            return { valid: true };
+        } else {
+            return { valid: false, message: 'Email phải có đuôi @gmail.com' };
+        }
     }
 }
 
 function validatePhone(phone) {
     if (!phone || phone.trim() === '') return { valid: false, message: 'Số điện thoại không được để trống' };
-    
-    let isValid = false;
-    const validFormats = [];
-    
-    if (appConfig.phoneValidation && appConfig.phoneValidation.patterns) {
-        const patterns = appConfig.phoneValidation.patterns;
-        
-        for (const [country, patternInfo] of Object.entries(patterns)) {
-            const regex = new RegExp(patternInfo.regex);
-            if (regex.test(phone)) {
-                isValid = true;
-                break;
+
+    if (appConfig.phoneValidation?.enabled) {
+        let isValid = false;
+        const validFormats = [];
+
+        if (appConfig.phoneValidation.patterns) {
+            for (const [country, patternInfo] of Object.entries(appConfig.phoneValidation.patterns)) {
+                const regex = new RegExp(patternInfo.regex);
+                if (regex.test(phone)) {
+                    isValid = true;
+                    break;
+                }
+                validFormats.push(`${patternInfo.name} (VD: ${patternInfo.example})`);
             }
-            
-            validFormats.push(`${patternInfo.name} (VD: ${patternInfo.example})`);
+
+            if (!isValid) {
+                return {
+                    valid: false,
+                    message: 'Số điện thoại không hợp lệ. Định dạng được chấp nhận: ' + validFormats.join(', ')
+                };
+            }
         }
-        
-        if (!isValid) {
-            return {
-                valid: false,
-                message: 'Số điện thoại không hợp lệ. Định dạng được chấp nhận: ' + validFormats.join(', ')
-            };
-        } else {
-            return { valid: true };
-        }
+        return { valid: true };
     } else {
-        return { valid: false, message: 'Không thể xác thực số điện thoại do thiếu cấu hình' };
+        if (/^\d+$/.test(phone)) {
+            return { valid: true };
+        } else {
+            return { valid: false, message: 'Số điện thoại chỉ được chứa chữ số' };
+        }
     }
 }
 
 function validateStatusTransition(currentStatus, newStatus) {
     if (currentStatus === newStatus) return { valid: true };
-    
-    if (appConfig.statusValidation && appConfig.statusValidation.transitions) {
+
+    if (appConfig.statusValidation?.enabled) {
         const allowedTransitions = appConfig.statusValidation.transitions[currentStatus] || [];
-        
+
         if (!allowedTransitions.includes(newStatus)) {
             return {
                 valid: false,
                 message: `Không thể chuyển trạng thái từ "${currentStatus}" sang "${newStatus}"`
             };
-        } else {
-            return { valid: true };
         }
+        return { valid: true };
     }
-    
+
     return { valid: true };
 }

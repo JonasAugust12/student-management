@@ -1,7 +1,16 @@
 function displayStudents() {
     const tbody = document.querySelector('#studentTable tbody');
     tbody.innerHTML = '';
+
+    const deletionEnabled = appConfig.deletionRestriction?.enabled ?? false;
+    const timeWindow = (appConfig.deletionRestriction?.timeWindowMinutes || 30) * 60 * 1000; 
+
+    const now = new Date().getTime();
+
     studentManager.students.forEach(student => {
+        const createdAt = new Date(student.createdAt).getTime();
+        const canDelete = !deletionEnabled || (now - createdAt <= timeWindow);
+
         const row = document.createElement('tr');
         row.innerHTML = `
             <td>${student.mssv}</td>
@@ -15,18 +24,24 @@ function displayStudents() {
             <td>${student.email}</td>
             <td>${student.phone}</td>
             <td>${student.status}</td>
-            <td >
-                <div class="btn-group">
-                    <button onclick="editStudent(${student.mssv})" >Sửa</button>
-                    <button onclick="deleteStudent(${student.mssv})" style="background-color: red;">Xóa</button>
+            <td>
+                <div >
+                    <div class="btn-group">
+                        <button onclick="editStudent('${student.mssv}')">Sửa</button>
+                    <button onclick="deleteStudent('${student.mssv}')" style="background-color: red; ${canDelete ? '' : 'opacity: 0.5; cursor: not-allowed;'}" ${canDelete ? '' : 'disabled'}>
+                        Xóa
+                    </button>
+                    </div>
+                    <button style="background-color: Green; margin-top: 5px; width: 100%">Xuất giấy xác nhận</button>
                 </div>
             </td>
         `;
         tbody.appendChild(row);
     });
-    // Update filter options after displaying students
+
     updateFilterOptions();
 }
+
 
 function deleteStudent(mssv) {
     if (confirm('Bạn có chắc muốn xóa sinh viên này?')) {
