@@ -1,0 +1,46 @@
+{
+    "emailValidation": {
+      "enabled": true,
+      "pattern": "@student.[domain].edu.vn",
+      "domains": ["hcmus", "ussh", "hcmut", "hcmue", "hcmup", "hcmuef", "hcmulaw", "hcmiu"]
+    },
+    "phoneValidation": {
+      "enabled": true,
+      "patterns": {
+        "VN": {
+          "regex": "^(\\+84|0[3|5|7|8|9])\\d{8}$",
+          "example": "0912345678 hoặc +84912345678",
+          "name": "Việt Nam"
+        },
+        "US": {
+          "regex": "^(\\+1|1)?\\d{10}$",
+          "example": "1234567890 hoặc +11234567890",
+          "name": "Mỹ"
+        },
+        "KR": {
+          "regex": "^(\\+82|0[1])\\d{8,9}$",
+          "example": "01012345678 hoặc +8201012345678",
+          "name": "Hàn Quốc"
+        },
+        "JP": {
+          "regex": "^(\\+81|0[7-9])\\d{8,9}$",
+          "example": "09012345678 hoặc +819012345678",
+          "name": "Nhật Bản"
+        }
+      }
+    },
+    "statusValidation": {
+      "enabled": true,
+      "defaultStatuses": ["Đang học", "Bảo lưu", "Tốt nghiệp", "Đình chỉ"],
+      "transitions": {
+        "Đang học": ["Bảo lưu", "Tốt nghiệp", "Đình chỉ"],
+        "Bảo lưu": ["Đang học", "Tốt nghiệp", "Đình chỉ"],
+        "Tốt nghiệp": [],
+        "Đình chỉ": ["Bảo lưu, Đang học"]
+      }
+    },
+    "deletionRestriction": {
+        "enabled": true,
+        "timeWindowMinutes": 30
+    }
+  }

@@ -4,9 +4,15 @@
     <meta charset="UTF-8">
     <title>Quản Lý Sinh Viên</title>
     <link rel="stylesheet" href="style.css">
-    <script src="manager.js" defer></script>
-    <script src="category.js" defer></script>
-    <script src="logging.js" defer></script>
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon.png">
+    <script src="logManager.js" defer></script>
+    <script src="categoryManager.js" defer></script>
+    <script src="studentManager.js" defer></script>
+    <script src="logFunctions.js" defer></script>
+    <script src="categoryFunctions.js" defer></script>
+    <script src="studentFunctions.js" defer></script>
+    <script src="config.js" defer></script>
+    <script src="main.js" defer></script>
 </head>
 <body>
     <div class="container">
@@ -22,6 +28,11 @@
 
         <div id="add" class="tab-content active">
             <form id="studentForm">
+                <div class="form-group">
+                    <label>MSSV:</label>
+                    <input type="number" id="mssv" required>
+                    <div class="mssv-error" style="color: red; display: none; margin-top: 5px;"></div>
+                </div>
                 <div class="form-group">
                     <label>Họ tên:</label>
                     <input type="text" id="fullname" required>
@@ -66,19 +77,18 @@
                 <div class="form-group">
                     <label>Email:</label>
                     <input type="email" id="email" required>
+                    <div class="email-error" style="color: red; display: none; margin-top: 5px;"></div>
                 </div>
                 <div class="form-group">
                     <label>Số điện thoại:</label>
-                    <input type="tel" id="phone" pattern="[0-9]{10,11}" required>
+                    <input type="tel" id="phone" required>
+                    <div class="phone-error" style="color: red; display: none; margin-top: 5px;"></div>
                 </div>
                 <div class="form-group">
                     <label>Tình trạng:</label>
                     <select id="status" required>
-                        <option value="Đang học">Đang học</option>
-                        <option value="Đã tốt nghiệp">Đã tốt nghiệp</option>
-                        <option value="Đã thôi học">Đã thôi học</option>
-                        <option value="Tạm dừng học">Tạm dừng học</option>
                     </select>
+                    <div class="status-error" style="color: red; display: none; margin-top: 5px;"></div>
                 </div>
                 <button type="submit">Thêm Sinh Viên</button>
                 <button type="button" id="cancelEdit" style="display: none; background-color: red;">Hủy Cập Nhật</button>
@@ -157,6 +167,10 @@
         </div>
 
         <div id="logs" class="tab-content">
+            <div style="display: flex; justify-content: flex-end; gap: 10px; margin-bottom: 10px;">
+                <button id="clearLogsButton" style="background-color: red;">Xóa toàn bộ log</button>
+                <button id="exportLogsButton" style="background-color: rgb(19, 19, 212);">Xuất file</button>
+            </div>
             <table id="logTable">
                 <thead>
                     <tr>
@@ -169,8 +183,45 @@
         </div>
     </div>
 
+    <div id="exportOverlay" class="overlay">
+        <div class="overlay-content">
+            <h2>Xuất Giấy Xác Nhận Tình Trạng Sinh Viên</h2>
+            
+            <label for="schoolName">Tên Trường:</label>
+            <input type="text" id="schoolName" placeholder="Nhập tên trường">
+            
+            <label for="schoolAddress">Địa chỉ:</label>
+            <input type="text" id="schoolAddress" placeholder="Nhập địa chỉ">
+            
+            <label for="schoolPhone">Số điện thoại:</label>
+            <input type="text" id="schoolPhone" placeholder="Nhập số điện thoại">
+            
+            <label for="schoolEmail">Email:</label>
+            <input type="email" id="schoolEmail" placeholder="Nhập email">
+            
+            <label for="expiryDate">Giấy xác nhận có hiệu lực đến:</label>
+            <input type="date" id="expiryDate">
+            
+            <label for="purpose">Mục đích xác nhận:</label>
+            <select id="purpose">
+                <option value="vay_von">Xác nhận đang học để vay vốn ngân hàng</option>
+                <option value="tam_hoan_nvqs">Xác nhận tạm hoãn nghĩa vụ quân sự</option>
+                <option value="ho_so_xin_viec">Xác nhận làm hồ sơ xin việc / thực tập</option>
+                <option value="khac">Lý do khác</option>
+            </select>
+            <input type="text" id="otherPurpose" placeholder="Nhập lý do khác" style="display: none; margin-top: 5px;">
+            
+            <div class="button-group">
+                <button id="exportHTML">Xuất HTML</button>
+                <button id="exportMD">Xuất Markdown</button>
+                <button id="closeOverlay">Đóng</button>
+            </div>
+        </div>
+    </div>
+
     <footer style="text-align: center; padding: 10px; background-color: #f1f1f1; margin-top: 20px; font-weight: bold;">
         <p>Version 2.0 | Build Date: 21/02/2025</p>
+        <img src="assets/favicon.png" alt="Logo" style="width: 50px; height: 50px;">
     </footer>
 </body>
 </html>
