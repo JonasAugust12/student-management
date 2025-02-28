@@ -5,6 +5,7 @@
   "main": "main.js",
   "scripts": {
     "test": "jest",
+    "coverage": "jest --coverage",
     "start": "live-server"
   },
   "repository": {
@@ -23,6 +24,11 @@
     "jest-environment-jsdom": "^29.7.0"
   },
   "jest": {
-    "testEnvironment": "jsdom"
+    "testEnvironment": "jsdom",
+    "collectCoverage": true,
+    "collectCoverageFrom": [
+      "logManager.js",
+      "studentManager.js"
+    ]
   }
 }

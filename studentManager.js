@@ -115,5 +115,5 @@ class StudentManagerWithLogging extends StudentManager {
 
 const studentManager = new StudentManagerWithLogging();
 if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { StudentManager, Student };
+    module.exports = { StudentManager, Student, StudentManagerWithLogging };
 }

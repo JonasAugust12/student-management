@@ -111,7 +111,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         const newStatus = statusSelect.value;
         const studentId = parseInt(form.dataset.studentId);
-        const student = studentManager.getStudent(studentId);
+        const student = studentManager.getStudent(studentId.toString());
         
         if (!student) return true;
         
