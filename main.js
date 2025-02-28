@@ -307,6 +307,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Export logs button
     document.getElementById("exportLogsButton").addEventListener("click", exportLogsToTxt);
 
+    //student certificate
+    document.getElementById("purpose").addEventListener("change", function() {
+        document.getElementById("otherPurpose").style.display = this.value === "khac" ? "block" : "none";
+    });
+    document.getElementById("closeOverlay").addEventListener("click", function() {
+        document.getElementById("exportOverlay").style.display = "none";
+    });
+    document.getElementById("exportHTML").addEventListener("click", () => exportStudentData("html"));
+    document.getElementById("exportMD").addEventListener("click", () => exportStudentData("md"));
+
     // Initialize the application
     categoryManager.updateFormSelects();
     categoryManager.displayCategories();

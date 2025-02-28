@@ -183,6 +183,42 @@
         </div>
     </div>
 
+    <div id="exportOverlay" class="overlay">
+        <div class="overlay-content">
+            <h2>Xuất Giấy Xác Nhận Tình Trạng Sinh Viên</h2>
+            
+            <label for="schoolName">Tên Trường:</label>
+            <input type="text" id="schoolName" placeholder="Nhập tên trường">
+            
+            <label for="schoolAddress">Địa chỉ:</label>
+            <input type="text" id="schoolAddress" placeholder="Nhập địa chỉ">
+            
+            <label for="schoolPhone">Số điện thoại:</label>
+            <input type="text" id="schoolPhone" placeholder="Nhập số điện thoại">
+            
+            <label for="schoolEmail">Email:</label>
+            <input type="email" id="schoolEmail" placeholder="Nhập email">
+            
+            <label for="expiryDate">Giấy xác nhận có hiệu lực đến:</label>
+            <input type="date" id="expiryDate">
+            
+            <label for="purpose">Mục đích xác nhận:</label>
+            <select id="purpose">
+                <option value="vay_von">Xác nhận đang học để vay vốn ngân hàng</option>
+                <option value="tam_hoan_nvqs">Xác nhận tạm hoãn nghĩa vụ quân sự</option>
+                <option value="ho_so_xin_viec">Xác nhận làm hồ sơ xin việc / thực tập</option>
+                <option value="khac">Lý do khác</option>
+            </select>
+            <input type="text" id="otherPurpose" placeholder="Nhập lý do khác" style="display: none; margin-top: 5px;">
+            
+            <div class="button-group">
+                <button id="exportHTML">Xuất HTML</button>
+                <button id="exportMD">Xuất Markdown</button>
+                <button id="closeOverlay">Đóng</button>
+            </div>
+        </div>
+    </div>
+
     <footer style="text-align: center; padding: 10px; background-color: #f1f1f1; margin-top: 20px; font-weight: bold;">
         <p>Version 2.0 | Build Date: 21/02/2025</p>
         <img src="assets/favicon.png" alt="Logo" style="width: 50px; height: 50px;">
