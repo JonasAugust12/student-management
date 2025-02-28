@@ -14,7 +14,7 @@ This project is an enhanced version of the Student Management System, designed t
   ![Add Student Interface](./screenshots/add-student.jpg)
 - **Update Student**: Edit existing student records
   ![Edit Student Interface](./screenshots/edit-student.jpg)
-- **Delete Student**: Remove student records (with restrictions based on creation time)
+- **List Student**: Displays a list of students and possible tasks
   ![List Student](./screenshots/list-student.jpg)
 - **Search Students**: Search for students by name, department, and other criteria
 - **Filter Students**: Filter students by gender, department, course, program, and status
