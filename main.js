@@ -1,0 +1,304 @@
+// Set up event listeners after DOM is fully loaded
+document.addEventListener('DOMContentLoaded', () => {
+    // Tab switching
+    document.querySelectorAll('.tab-button').forEach(button => {
+        button.addEventListener('click', () => {
+            document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            button.classList.add('active');
+            document.getElementById(button.dataset.tab).classList.add('active');
+
+            if (button.dataset.tab === 'list') {
+                displayStudents();
+            } else if (button.dataset.tab === 'categories') {
+                categoryManager.displayCategories();
+            } else if (button.dataset.tab === 'logs') {
+                displayLogs();
+            }
+        });
+    });
+
+    // Add validation for email and phone fields
+    const emailInput = document.getElementById('email');
+    const emailError = document.querySelector('.email-error');
+    const phoneInput = document.getElementById('phone');
+    const phoneError = document.querySelector('.phone-error');
+    
+    // MSSV validation
+    const mssvInput = document.getElementById('mssv');
+    const mssvError = document.querySelector('.mssv-error');
+
+    // MSSV validation function
+    mssvInput.addEventListener('blur', validateMSSV);
+
+    function validateMSSV() {
+        const mssv = mssvInput.value.trim();
+        if (mssv === '') return;
+        
+        // Convert to number for consistent comparison
+        const mssvNum = parseInt(mssv);
+        
+        // Get current student ID if in edit mode
+        const form = document.getElementById('studentForm');
+        const isEditMode = form.dataset.editMode === "true";
+        const currentId = isEditMode ? parseInt(form.dataset.studentId) : null;
+        
+        // Check if MSSV already exists
+        if (studentManager.isIdExists(mssvNum, currentId)) {
+            mssvError.textContent = 'MSSV này đã tồn tại trong hệ thống. Vui lòng nhập MSSV khác.';
+            mssvError.style.display = 'block';
+            mssvInput.classList.add('error-input');
+            return false;
+        } else {
+            mssvError.style.display = 'none';
+            mssvInput.classList.remove('error-input');
+            return true;
+        }
+    }
+
+    // Email validation
+    emailInput.addEventListener('blur', validateEmail);
+    
+    function validateEmail() {
+        const email = emailInput.value.trim();
+        if (email === '') return;
+        
+        // Check if email has the pattern @student.university.edu.vn
+        const match = email.match(/@student\.(.+)\.edu\.vn$/i);
+        if (!match || !validEmailDomains.includes(match[1].toLowerCase())) {
+            emailError.textContent = 'Email phải có dạng @student.university.edu.vn với university là: ' + 
+                                     validEmailDomains.join(', ');
+            emailError.style.display = 'block';
+            emailInput.classList.add('error-input');
+            return false;
+        } else {
+            emailError.style.display = 'none';
+            emailInput.classList.remove('error-input');
+            return true;
+        }
+    }
+
+    // Phone validation
+    phoneInput.addEventListener('blur', validatePhone);
+    
+    function validatePhone() {
+        const phone = phoneInput.value.trim();
+        if (phone === '') return;
+        
+        let isValid = false;
+        const validFormats = [];
+        
+        // Check against all patterns
+        for (const [country, pattern] of Object.entries(phonePatterns)) {
+            if (pattern.test(phone)) {
+                isValid = true;
+                break;
+            }
+            
+            // Build example formats for error message
+            switch(country) {
+                case 'VN':
+                    validFormats.push('Việt Nam (VD: 0912345678 hoặc +84912345678)');
+                    break;
+                case 'US':
+                    validFormats.push('Mỹ (VD: 1234567890 hoặc +11234567890)');
+                    break;
+                case 'KR':
+                    validFormats.push('Hàn Quốc (VD: 01012345678 hoặc +8201012345678)');
+                    break;
+                case 'JP':
+                    validFormats.push('Nhật Bản (VD: 09012345678 hoặc +819012345678)');
+                    break;
+            }
+        }
+        
+        if (!isValid) {
+            phoneError.textContent = 'Số điện thoại không hợp lệ. Định dạng được chấp nhận: ' + 
+                                     validFormats.join(', ');
+            phoneError.style.display = 'block';
+            phoneInput.classList.add('error-input');
+            return false;
+        } else {
+            phoneError.style.display = 'none';
+            phoneInput.classList.remove('error-input');
+            return true;
+        }
+    }
+
+    // Add CSS for error highlighting
+    const style = document.createElement('style');
+    style.textContent = `
+        .error-input {
+            border: 1px solid red !important;
+            background-color: #fff0f0 !important;
+        }
+    `;
+    document.head.appendChild(style);
+
+    // Form submission
+    document.getElementById('studentForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        // Add validation before submitting
+        const isEmailValid = validateEmail();
+        const isPhoneValid = validatePhone();
+        const isMssvValid = validateMSSV();
+        
+        if (!isEmailValid || !isPhoneValid || !isMssvValid) {
+            return;
+        }
+        
+        const form = e.target;
+        const isEditMode = form.dataset.editMode === "true";
+        
+        const studentData = {
+            mssv: document.getElementById('mssv').value,
+            fullname: document.getElementById('fullname').value,
+            dob: document.getElementById('dob').value,
+            gender: document.getElementById('gender').value,
+            department: document.getElementById('department').value,
+            course: document.getElementById('course').value,
+            program: document.getElementById('program').value,
+            address: document.getElementById('address').value,
+            email: document.getElementById('email').value,
+            phone: document.getElementById('phone').value,
+            status: document.getElementById('status').value
+        };
+        
+        if (isEditMode) {
+            const mssv = parseInt(form.dataset.studentId);
+            if (studentManager.updateStudent(mssv, studentData)) {
+                alert('Cập nhật thành công!');
+                form.reset();
+                form.dataset.editMode = "false";
+                form.dataset.studentId = "";
+                const submitButton = document.querySelector('#studentForm button[type="submit"]');
+                document.getElementById('cancelEdit').style.display = "none";
+                submitButton.textContent = "Thêm Sinh Viên";
+                displayStudents();
+                document.querySelector('[data-tab="list"]').click();
+            }
+        } else {
+            const student = new Student(
+                studentData.mssv,
+                studentData.fullname,
+                studentData.dob,
+                studentData.gender,
+                studentData.department,
+                studentData.course,
+                studentData.program,
+                studentData.address,
+                studentData.email,
+                studentData.phone,
+                studentData.status
+            );
+            studentManager.addStudent(student);
+            form.reset();
+            alert('Thêm sinh viên thành công!');
+            document.getElementById('cancelEdit').style.display = "none";
+            displayStudents();
+        }
+    });
+
+    // Seach
+    document.getElementById('search').insertAdjacentHTML('afterbegin', `
+        <div class="filter-container">
+            <div class="form-group">
+                <label>Giới tính:</label>
+                <select id="filterGender">
+                    <option value="">Tất cả</option>
+                    <option value="Nam">Nam</option>
+                    <option value="Nữ">Nữ</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Khoa:</label>
+                <select id="filterDepartment">
+                    <option value="">Tất cả</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Khóa:</label>
+                <input type="number" id="filterCourse" placeholder="VD: 2023">
+            </div>
+            <div class="form-group">
+                <label>Chương trình:</label>
+                <select id="filterProgram">
+                    <option value="">Tất cả</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Tình trạng:</label>
+                <select id="filterStatus">
+                    <option value="">Tất cả</option>
+                </select>
+            </div>
+        </div>
+    `);
+
+    // Search and filter event listeners
+    if (document.getElementById('searchButton')) {
+        document.getElementById('searchButton').addEventListener('click', searchStudents);
+    }
+    if (document.getElementById('filterGender')) {
+        document.getElementById('filterGender').addEventListener('change', searchStudents);
+    }
+    if (document.getElementById('filterDepartment')) {
+        document.getElementById('filterDepartment').addEventListener('change', searchStudents);
+    }
+    if (document.getElementById('filterCourse')) {
+        document.getElementById('filterCourse').addEventListener('input', searchStudents);
+    }
+    if (document.getElementById('filterProgram')) {
+        document.getElementById('filterProgram').addEventListener('change', searchStudents);
+    }
+    if (document.getElementById('filterStatus')) {
+        document.getElementById('filterStatus').addEventListener('change', searchStudents);
+    }
+
+    // Export and import buttons
+    if (document.getElementById('exportCSVButton')) {
+        document.getElementById("exportCSVButton").addEventListener("click", exportToCSV);
+    }
+    if (document.getElementById('importCSVInput')) {
+        document.getElementById("importCSVInput").addEventListener("change", importFromCSV);
+    }
+    if (document.getElementById('exportJSONButton')) {
+        document.getElementById('exportJSONButton').addEventListener('click', exportToJSON);
+    }
+    if (document.getElementById('importJSONInput')) {
+        document.getElementById('importJSONInput').addEventListener('change', importFromJSON);
+    }
+    if (document.getElementById('importJSONButton')) {
+        document.getElementById('importJSONButton').addEventListener('click', () => {
+            document.getElementById('importJSONInput').click();
+        });
+    }
+
+    // Cancel edit button
+    if (document.getElementById('cancelEdit')) {
+        document.getElementById('cancelEdit').addEventListener('click', () => {
+            const form = document.getElementById('studentForm');
+            form.reset();
+            form.dataset.editMode = "false";
+            form.dataset.studentId = "";
+            document.querySelector('#studentForm button[type="submit"]').textContent = "Thêm Sinh Viên";
+            document.getElementById('cancelEdit').style.display = "none";
+        });
+    }
+
+    // Clear logs button
+    if (document.getElementById('clearLogsButton')) {
+        document.getElementById('clearLogsButton').addEventListener('click', () => {
+            logManager.clearLogs();
+            displayLogs();
+        });
+    }
+    // Export logs button
+    document.getElementById("exportLogsButton").addEventListener("click", exportLogsToTxt);
+
+    // Initialize the application
+    categoryManager.updateFormSelects();
+    categoryManager.displayCategories();
+    displayStudents();
+});

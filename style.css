@@ -213,3 +213,9 @@ th {
 .cancel-btn:hover {
     background-color: #c82333;
 }
+
+.error-message {
+    margin-top: 5px;
+    color: red;
+    font-size: 0.9em;
+}
