@@ -2,7 +2,7 @@
 
 ## Live Demo
 
-Try the application here: [Student Management System](https://student-management-5q1qwrfju-minh-toans-projects.vercel.app/)
+Try the application here: [Student Management System](https://student-management-8nnhhly4g-minh-toans-projects.vercel.app/)
 
 ## Introduction
 
