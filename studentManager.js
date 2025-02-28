@@ -32,6 +32,10 @@ class StudentManager {
         return this.students.some(s => s.phone === phone && s.mssv !== currentId);
     }
 
+    getStudent(mssv) {
+        return this.students.find(student => student.mssv === mssv) || null;
+    }
+
     addStudent(student) {
         this.students.push(student);
         this.saveToStorage();
@@ -39,12 +43,12 @@ class StudentManager {
     }
 
     removeStudent(mssv) {
-        this.students = this.students.filter(s => s.mssv !== parseInt(mssv));
+        this.students = this.students.filter(s => s.mssv !== mssv);
         this.saveToStorage();
     }
 
     updateStudent(mssv, updatedData) {
-        const index = this.students.findIndex(s => s.mssv === parseInt(mssv));
+        const index = this.students.findIndex(s => s.mssv ===mssv);
         if (index !== -1) {
             this.students[index] = { ...this.students[index], ...updatedData };
             this.saveToStorage();
@@ -83,7 +87,7 @@ class StudentManagerWithLogging extends StudentManager {
     }
 
     removeStudent(mssv) {
-        const student = this.students.find(s => s.mssv === parseInt(mssv));
+        const student = this.students.find(s => s.mssv === mssv);
         if (student) {
             logManager.addLog(`[DELETE][STUDENT][ID:${student.mssv}]`);
         }
@@ -91,7 +95,7 @@ class StudentManagerWithLogging extends StudentManager {
     }
 
     updateStudent(mssv, updatedData) {
-        const oldStudent = this.students.find(s => s.mssv === parseInt(mssv));
+        const oldStudent = this.students.find(s => s.mssv === mssv);
         if (!oldStudent) return false;
 
         let changes = [];

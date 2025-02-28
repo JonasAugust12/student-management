@@ -30,13 +30,13 @@ function displayStudents() {
 
 function deleteStudent(mssv) {
     if (confirm('Bạn có chắc muốn xóa sinh viên này?')) {
-        studentManager.removeStudent(mssv);
+        studentManager.removeStudent(mssv.toString());
         displayStudents();
     }
 }
 
 function editStudent(mssv) {
-    const student = studentManager.students.find(s => s.mssv === mssv);
+    const student = studentManager.students.find(s => s.mssv === mssv.toString());
     if (!student) return;
 
     Object.keys(student).forEach(key => {

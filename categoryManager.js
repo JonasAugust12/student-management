@@ -14,9 +14,9 @@ class CategoryManager {
         ];
         this.statuses = JSON.parse(localStorage.getItem('statuses')) || [
             "Đang học",
-            "Đã tốt nghiệp",
-            "Đã thôi học",
-            "Tạm dừng học"
+            "Bảo lưu",
+            "Đình chỉ",
+            "Tốt nghiệp"
         ];
     }
 

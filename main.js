@@ -1,5 +1,7 @@
 // Set up event listeners after DOM is fully loaded
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+    await loadConfig();
+    
     // Tab switching
     document.querySelectorAll('.tab-button').forEach(button => {
         button.addEventListener('click', () => {
@@ -28,6 +30,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const mssvInput = document.getElementById('mssv');
     const mssvError = document.querySelector('.mssv-error');
 
+    // Status validation
+    const statusSelect = document.getElementById('status');
+    const statusError = document.querySelector('.status-error');
+
     // MSSV validation function
     mssvInput.addEventListener('blur', validateMSSV);
 
@@ -44,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const currentId = isEditMode ? parseInt(form.dataset.studentId) : null;
         
         // Check if MSSV already exists
-        if (studentManager.isIdExists(mssvNum, currentId)) {
+        if (studentManager.isIdExists(mssvNum.toString(), currentId?.toString())) {
             mssvError.textContent = 'MSSV này đã tồn tại trong hệ thống. Vui lòng nhập MSSV khác.';
             mssvError.style.display = 'block';
             mssvInput.classList.add('error-input');
@@ -57,17 +63,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Email validation
-    emailInput.addEventListener('blur', validateEmail);
-    
-    function validateEmail() {
+    emailInput.addEventListener('blur', function() {
         const email = emailInput.value.trim();
         if (email === '') return;
         
-        // Check if email has the pattern @student.university.edu.vn
-        const match = email.match(/@student\.(.+)\.edu\.vn$/i);
-        if (!match || !validEmailDomains.includes(match[1].toLowerCase())) {
-            emailError.textContent = 'Email phải có dạng @student.university.edu.vn với university là: ' + 
-                                     validEmailDomains.join(', ');
+        const result = validateEmail(email);
+        if (!result.valid) {
+            emailError.textContent = result.message;
             emailError.style.display = 'block';
             emailInput.classList.add('error-input');
             return false;
@@ -76,51 +78,54 @@ document.addEventListener('DOMContentLoaded', () => {
             emailInput.classList.remove('error-input');
             return true;
         }
-    }
+    });
 
     // Phone validation
-    phoneInput.addEventListener('blur', validatePhone);
-    
-    function validatePhone() {
+    phoneInput.addEventListener('blur', function() {
         const phone = phoneInput.value.trim();
         if (phone === '') return;
         
-        let isValid = false;
-        const validFormats = [];
-        
-        // Check against all patterns
-        for (const [country, pattern] of Object.entries(phonePatterns)) {
-            if (pattern.test(phone)) {
-                isValid = true;
-                break;
-            }
-            
-            // Build example formats for error message
-            switch(country) {
-                case 'VN':
-                    validFormats.push('Việt Nam (VD: 0912345678 hoặc +84912345678)');
-                    break;
-                case 'US':
-                    validFormats.push('Mỹ (VD: 1234567890 hoặc +11234567890)');
-                    break;
-                case 'KR':
-                    validFormats.push('Hàn Quốc (VD: 01012345678 hoặc +8201012345678)');
-                    break;
-                case 'JP':
-                    validFormats.push('Nhật Bản (VD: 09012345678 hoặc +819012345678)');
-                    break;
-            }
-        }
-        
-        if (!isValid) {
-            phoneError.textContent = 'Số điện thoại không hợp lệ. Định dạng được chấp nhận: ' + 
-                                     validFormats.join(', ');
+        const result = validatePhone(phone);
+        if (!result.valid) {
+            phoneError.textContent = result.message;
             phoneError.style.display = 'block';
             phoneInput.classList.add('error-input');
             return false;
         } else {
             phoneError.style.display = 'none';
             phoneInput.classList.remove('error-input');
+            return true;
+        }
+    });
+
+    // Status validation for edit mode
+    document.getElementById('studentForm').addEventListener('change', (e) => {
+        if (e.target.id === 'status' && e.target.form.dataset.editMode === "true") {
+            validateStatusChange();
+        }
+    });
+
+    function validateStatusChange() {
+        const form = document.getElementById('studentForm');
+        if (form.dataset.editMode !== "true") return true;
+
+        const newStatus = statusSelect.value;
+        const studentId = parseInt(form.dataset.studentId);
+        const student = studentManager.getStudent(studentId);
+        
+        if (!student) return true;
+        
+        const currentStatus = student.status;
+        
+        const result = validateStatusTransition(currentStatus, newStatus);
+        if (!result.valid) {
+            statusError.textContent = result.message;
+            statusError.style.display = 'block';
+            statusSelect.classList.add('error-input');
+            return false;
+        } else {
+            statusError.style.display = 'none';
+            statusSelect.classList.remove('error-input');
             return true;
         }
     }
@@ -139,12 +144,17 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('studentForm').addEventListener('submit', (e) => {
         e.preventDefault();
         
-        // Add validation before submitting
-        const isEmailValid = validateEmail();
-        const isPhoneValid = validatePhone();
+        // Kiểm tra hợp lệ trước khi submit
+        const isEmailValid = emailInput.value.trim() === '' || validateEmail(emailInput.value.trim()).valid;
+        const isPhoneValid = phoneInput.value.trim() === '' || validatePhone(phoneInput.value.trim()).valid;
         const isMssvValid = validateMSSV();
         
-        if (!isEmailValid || !isPhoneValid || !isMssvValid) {
+        let isStatusValid = true;
+        if (e.target.dataset.editMode === "true") {
+            isStatusValid = validateStatusChange();
+        }
+        
+        if (!isEmailValid || !isPhoneValid || !isMssvValid || !isStatusValid) {
             return;
         }
         
@@ -167,7 +177,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (isEditMode) {
             const mssv = parseInt(form.dataset.studentId);
-            if (studentManager.updateStudent(mssv, studentData)) {
+            if (studentManager.updateStudent(mssv.toString(), studentData)) {
                 alert('Cập nhật thành công!');
                 form.reset();
                 form.dataset.editMode = "false";
